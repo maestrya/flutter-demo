@@ -41,30 +41,25 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<List<String>> _getData() async {
-    var values = new List<String>();
-    String apiUrl = 'http://www.mocky.io/v2/5e3e37ed33000052008b09ab';
+  Future<List> _getData() async {
+    var values = new List();
+    String apiUrl =
+        'https://protected-ridge-35353.herokuapp.com/api/pages/page_test';
     http.Response response = await http.get(apiUrl);
     final items = json.decode(response.body);
-
-    for (var item in items['page_test']['body']['render']) {
-      values.add(item['type']);
+    for (var item in items['data']['body']['render']) {
+      values.add(item);
     }
     return values;
   }
 
   Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
-    List<String> values = snapshot.data;
+    List values = snapshot.data;
     List<Widget> childrenArray = [];
 
     for (final value in values) {
-      if (value == 'text') {
-        childrenArray
-            .add(TextWidget(autoInput: new AutoTextWidgetInferface(value)));
-      } else if (value == 'input') {
-        childrenArray
-            .add(InputWidgetState(autoInput: new AutoInputInferface(value)));
-      }
+       childrenArray
+            .add(InputWidgetState(autoInput: new AutoInputInferface('value')));
     }
 
     return new ListView.builder(

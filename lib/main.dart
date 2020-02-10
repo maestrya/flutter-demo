@@ -58,8 +58,15 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> childrenArray = [];
 
     for (final value in values) {
-       childrenArray
+      if (value['type'] == 'text') {
+        print(value.runtimeType);
+        print(value);
+        childrenArray
+            .add(TextWidget(autoInput: new AutoTextWidgetInferface(value)));
+      } else if (value['type'] == 'input') {
+        childrenArray
             .add(InputWidgetState(autoInput: new AutoInputInferface('value')));
+      }
     }
 
     return new ListView.builder(
@@ -82,14 +89,14 @@ class TextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Text(this.autoInput.label));
+        child: Text(this.autoInput.data['value']['text']));
   }
 }
 
 class AutoTextWidgetInferface {
-  final String label;
+  final Map<String, dynamic>  data;
 
-  AutoTextWidgetInferface(this.label);
+  AutoTextWidgetInferface(this.data);
 }
 
 class InputWidgetState extends StatelessWidget {

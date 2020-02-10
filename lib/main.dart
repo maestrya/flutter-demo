@@ -59,13 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for (final value in values) {
       if (value['type'] == 'text') {
-        print(value.runtimeType);
-        print(value);
         childrenArray
-            .add(TextWidget(autoInput: new AutoTextWidgetInferface(value)));
+            .add(TextWidget(autoInput: new MapStringDynamicInferface(value)));
       } else if (value['type'] == 'input') {
         childrenArray
-            .add(InputWidgetState(autoInput: new AutoInputInferface('value')));
+            .add(InputWidgetState(params: new MapStringDynamicInferface(value)));
       }
     }
 
@@ -82,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class TextWidget extends StatelessWidget {
-  final AutoTextWidgetInferface autoInput;
+  final MapStringDynamicInferface autoInput;
 
   TextWidget({Key key, @required this.autoInput}) : super(key: key);
   @override
@@ -93,17 +91,17 @@ class TextWidget extends StatelessWidget {
   }
 }
 
-class AutoTextWidgetInferface {
+class MapStringDynamicInferface {
   final Map<String, dynamic>  data;
 
-  AutoTextWidgetInferface(this.data);
+  MapStringDynamicInferface(this.data);
 }
 
 class InputWidgetState extends StatelessWidget {
-  final AutoInputInferface autoInput;
+  final MapStringDynamicInferface params;
 
   // In the constructor, require a Person
-  InputWidgetState({Key key, @required this.autoInput}) : super(key: key);
+  InputWidgetState({Key key, @required this.params}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -114,19 +112,13 @@ class InputWidgetState extends StatelessWidget {
         children: <Widget>[
           TextFormField(
             decoration: InputDecoration(
-              labelText: autoInput.label,
+              labelText: params.data['value']['name'],
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(25.0),
                 borderSide: BorderSide(),
               ),
             ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
           ),
         ],
       ),

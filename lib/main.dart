@@ -35,11 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Pull to refresh"),
-        ),
-        body: createListView());
+    return createListView();
   }
 
   Future<Null> _getData() async {
@@ -50,7 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
         'https://protected-ridge-35353.herokuapp.com/api/pages/page_test';
     http.Response response = await http.get(apiUrl);
     final items = json.decode(response.body);
-    print(items);
 
     setState(() {
       list = items;
@@ -62,40 +57,42 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget createListView() {
     List<Widget> childrenArray = [];
     for (final value in list['data']['body']['render']) {
-      print(value);
       if (value['type'] == 'text') {
         childrenArray
-            .add(TextWidget(autoInput: new MapStringDynamicInferface(value)));
+            .add(TextWidget(params: new MapStringDynamicInferface(value)));
       } else if (value['type'] == 'input') {
         childrenArray.add(
             InputWidgetState(params: new MapStringDynamicInferface(value)));
       }
     }
-
-    return new RefreshIndicator(
-        key: refreshKey,
-        onRefresh: _getData,
-        child: new ListView.builder(
-          padding: const EdgeInsets.all(20.0),
-          itemCount: 1,
-          itemBuilder: (BuildContext context, int index) {
-            return new Column(
-              children: childrenArray,
-            );
-          },
-        ));
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(list['data']['header']['title']['text']),
+        ),
+        body: new RefreshIndicator(
+            key: refreshKey,
+            onRefresh: _getData,
+            child: new ListView.builder(
+              padding: const EdgeInsets.all(20.0),
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index) {
+                return new Column(
+                  children: childrenArray,
+                );
+              },
+            )));
   }
 }
 
 class TextWidget extends StatelessWidget {
-  final MapStringDynamicInferface autoInput;
+  final MapStringDynamicInferface params;
 
-  TextWidget({Key key, @required this.autoInput}) : super(key: key);
+  TextWidget({Key key, @required this.params}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Text(this.autoInput.data['value']['text']));
+        child: Text(this.params.data['value']['text']));
   }
 }
 

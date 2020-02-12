@@ -24,58 +24,77 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+  var list;
+
+  @override
+  void initState() {
+    super.initState();
+    _getData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var futureBuilder = new FutureBuilder(
-      future: _getData(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return createListView(context, snapshot);
-      },
-    );
-
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Home Page"),
-      ),
-      body: futureBuilder,
-    );
-  }
-
-  Future<List> _getData() async {
-    var values = new List();
-    String apiUrl =
-        'https://protected-ridge-35353.herokuapp.com/api/pages/page_test';
-    http.Response response = await http.get(apiUrl);
-    final items = json.decode(response.body);
-    for (var item in items['data']['body']['render']) {
-      values.add(item);
-    }
-    return values;
-  }
-
-  Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
-    List values = snapshot.data;
     List<Widget> childrenArray = [];
-
-    for (final value in values) {
+    print(list);
+    for (final value in list) {
       if (value['type'] == 'text') {
         childrenArray
             .add(TextWidget(autoInput: new MapStringDynamicInferface(value)));
       } else if (value['type'] == 'input') {
-        childrenArray
-            .add(InputWidgetState(params: new MapStringDynamicInferface(value)));
+        childrenArray.add(
+            InputWidgetState(params: new MapStringDynamicInferface(value)));
       }
     }
 
-    return new ListView.builder(
-      padding: const EdgeInsets.all(20.0),
-      itemCount: 1,
-      itemBuilder: (BuildContext context, int index) {
-        return new Column(
-          children: childrenArray,
-        );
-      },
-    );
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Pull to refresh"),
+        ),
+        body: createListView());
+  }
+
+  Future<Null> _getData() async {
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 2));
+
+    String apiUrl =
+        'https://protected-ridge-35353.herokuapp.com/api/pages/page_test';
+    http.Response response = await http.get(apiUrl);
+    final items = json.decode(response.body);
+    print(items['data']['body']['render']);
+    setState(() {
+      list = items['data']['body']['render'];
+    });
+
+    return null;
+  }
+
+  Widget createListView() {
+    List<Widget> childrenArray = [];
+    print(list);
+    for (final value in list) {
+      if (value['type'] == 'text') {
+        childrenArray
+            .add(TextWidget(autoInput: new MapStringDynamicInferface(value)));
+      } else if (value['type'] == 'input') {
+        childrenArray.add(
+            InputWidgetState(params: new MapStringDynamicInferface(value)));
+      }
+    }
+
+    return new RefreshIndicator(
+        key: refreshKey,
+        onRefresh: _getData,
+        child: new ListView.builder(
+          padding: const EdgeInsets.all(20.0),
+          itemCount: 1,
+          itemBuilder: (BuildContext context, int index) {
+            return new Column(
+              children: childrenArray,
+            );
+          },
+        ));
   }
 }
 
@@ -92,7 +111,7 @@ class TextWidget extends StatelessWidget {
 }
 
 class MapStringDynamicInferface {
-  final Map<String, dynamic>  data;
+  final Map<String, dynamic> data;
 
   MapStringDynamicInferface(this.data);
 }

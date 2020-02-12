@@ -35,18 +35,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> childrenArray = [];
-    print(list);
-    for (final value in list) {
-      if (value['type'] == 'text') {
-        childrenArray
-            .add(TextWidget(autoInput: new MapStringDynamicInferface(value)));
-      } else if (value['type'] == 'input') {
-        childrenArray.add(
-            InputWidgetState(params: new MapStringDynamicInferface(value)));
-      }
-    }
-
     return Scaffold(
         appBar: AppBar(
           title: Text("Pull to refresh"),
@@ -62,9 +50,10 @@ class _MyHomePageState extends State<MyHomePage> {
         'https://protected-ridge-35353.herokuapp.com/api/pages/page_test';
     http.Response response = await http.get(apiUrl);
     final items = json.decode(response.body);
-    print(items['data']['body']['render']);
+    print(items);
+
     setState(() {
-      list = items['data']['body']['render'];
+      list = items;
     });
 
     return null;
@@ -72,8 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget createListView() {
     List<Widget> childrenArray = [];
-    print(list);
-    for (final value in list) {
+    for (final value in list['data']['body']['render']) {
+      print(value);
       if (value['type'] == 'text') {
         childrenArray
             .add(TextWidget(autoInput: new MapStringDynamicInferface(value)));

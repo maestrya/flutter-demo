@@ -60,9 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
       if (value['type'] == 'text') {
         childrenArray
             .add(TextWidget(params: new MapStringDynamicInferface(value)));
-      } else if (value['type'] == 'input') {
-        childrenArray.add(
-            InputWidgetState(params: new MapStringDynamicInferface(value)));
+      } else if (value['type'] == 'input') {                
+        childrenArray.add(InputWidgetState(params: new MapStringDynamicInferface(value)));
+      } else if (value['type'] == 'select') {
+        childrenArray.add(DropdownButtonWidget(params: new MapStringDynamicInferface(value)));
       }
     }
     return Scaffold(
@@ -135,4 +136,49 @@ class AutoInputInferface {
   final String label;
 
   AutoInputInferface(this.label);
+}
+
+class DropdownButtonWidget extends StatefulWidget {
+  final MapStringDynamicInferface params;
+
+  DropdownButtonWidget({Key key, @required this.params}) : super(key: key);
+
+  @override
+  DropdownButtonWidgetState createState() => DropdownButtonWidgetState();
+}
+
+
+class DropdownButtonWidgetState extends State<DropdownButtonWidget> {
+  String dropdownValue = 'One';
+  final MapStringDynamicInferface params;
+
+  // In the constructor, require a Person
+  DropdownButtonWidgetState({Key key, @required this.params});
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      icon: Icon(Icons.arrow_downward),
+      iconSize: 24,
+      elevation: 16,
+      style: TextStyle(color: Colors.deepPurple),
+      underline: Container(
+        height: 2,
+        color: Colors.deepPurpleAccent,
+      ),
+      onChanged: (String newValue) {
+        setState(() {
+          dropdownValue = newValue;
+        });
+      },
+      items: <String>['One', 'Two', 'Free', 'Four']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
 }

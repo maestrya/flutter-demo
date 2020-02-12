@@ -144,7 +144,7 @@ class DropdownButtonWidget extends StatefulWidget {
   DropdownButtonWidget({Key key, @required this.params}) : super(key: key);
 
   @override
-  DropdownButtonWidgetState createState() => DropdownButtonWidgetState();
+  DropdownButtonWidgetState createState() => DropdownButtonWidgetState(params: null);
 }
 
 

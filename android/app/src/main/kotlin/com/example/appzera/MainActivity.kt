@@ -1,4 +1,4 @@
-package com.example.appzera
+package com.velrino.autockage
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

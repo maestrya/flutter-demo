@@ -57,19 +57,20 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> handleWidgets(list) {
     List<Widget> childrenWidgets = [];
     for (final item in list) {
+      final value = new MapStringDynamicInferface(item);
       if (item['type'] == 'text') {
         childrenWidgets
-            .add(TextWidget(params: new MapStringDynamicInferface(item)));
+            .add(TextWidget(params: value));
       } else if (item['type'] == 'input') {
         childrenWidgets
-            .add(InputWidgetState(params: new MapStringDynamicInferface(item)));
+            .add(InputWidgetState(params: value));
       } else if (item['type'] == 'select') {
         childrenWidgets.add(
-            DropdownButtonWidget(params: new MapStringDynamicInferface(item)));
+            DropdownButtonWidget(params: value));
       }
        else if (item['type'] == 'cards') {
         childrenWidgets.add(
-            CardWidgetState(params: new MapStringDynamicInferface(item)));
+            CardWidgetState(params: value));
       }
     }
     return childrenWidgets;

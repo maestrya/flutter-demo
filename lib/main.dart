@@ -53,22 +53,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return null;
   }
-  
+
   List<Widget> handleWidgets(list) {
-      List<Widget> childrenWidgets = [];
-      for (final item in list) {
-        if (item['type'] == 'text') {
-          childrenWidgets
-              .add(TextWidget(params: new MapStringDynamicInferface(item)));
-        } else if (item['type'] == 'input') {
-          childrenWidgets.add(
-              InputWidgetState(params: new MapStringDynamicInferface(item)));
-        } else if (item['type'] == 'select') {
-          childrenWidgets.add(DropdownButtonWidget(
-              params: new MapStringDynamicInferface(item)));
-        }
+    List<Widget> childrenWidgets = [];
+    for (final item in list) {
+      if (item['type'] == 'text') {
+        childrenWidgets
+            .add(TextWidget(params: new MapStringDynamicInferface(item)));
+      } else if (item['type'] == 'input') {
+        childrenWidgets
+            .add(InputWidgetState(params: new MapStringDynamicInferface(item)));
+      } else if (item['type'] == 'select') {
+        childrenWidgets.add(
+            DropdownButtonWidget(params: new MapStringDynamicInferface(item)));
       }
-      return childrenWidgets;
+       else if (item['type'] == 'cards') {
+        childrenWidgets.add(
+            CardWidgetState(params: new MapStringDynamicInferface(item)));
+      }
+    }
+    return childrenWidgets;
   }
 
   Widget createListView() {
@@ -79,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
       childrenWidgets = this.handleWidgets(list['data']['body']['render']);
       titleScaffold = list['data']['header']['title']['text'];
     }
-    
+
     return Scaffold(
         appBar: AppBar(
           title: Text(titleScaffold),
@@ -194,5 +198,41 @@ class DropdownButtonWidgetState extends State<DropdownButtonWidget> {
         );
       }).toList(),
     );
+  }
+}
+
+class CardWidgetState extends StatelessWidget {
+  final MapStringDynamicInferface params;
+
+  // In the constructor, require a Person
+  CardWidgetState({Key key, @required this.params}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final paramsStyle = this.params.data['value'];
+
+    final styles = {
+      "scrollDirection": (paramsStyle['type'] == "horizontal") ? Axis.horizontal : Axis.vertical,
+      "groupHeight": paramsStyle['style']['groupHeight'].toDouble(),
+      "cardwidth": paramsStyle['style']['groupHeight'].toDouble(),
+    };
+
+    return Container(
+        height: styles['groupHeight'],
+        child: ListView.builder(
+          scrollDirection: styles['scrollDirection'],
+          itemCount: paramsStyle['cards'].length,
+          itemBuilder: (BuildContext context, int i) => Card(
+            child: Container(
+              width: styles['cardwidth'],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text(paramsStyle['cards'][i]['text']),
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 }

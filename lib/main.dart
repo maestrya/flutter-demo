@@ -53,22 +53,36 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return null;
   }
+  
+  List<Widget> handleWidgets(list) {
+      List<Widget> childrenWidgets = [];
+      for (final item in list) {
+        if (item['type'] == 'text') {
+          childrenWidgets
+              .add(TextWidget(params: new MapStringDynamicInferface(item)));
+        } else if (item['type'] == 'input') {
+          childrenWidgets.add(
+              InputWidgetState(params: new MapStringDynamicInferface(item)));
+        } else if (item['type'] == 'select') {
+          childrenWidgets.add(DropdownButtonWidget(
+              params: new MapStringDynamicInferface(item)));
+        }
+      }
+      return childrenWidgets;
+  }
 
   Widget createListView() {
-    List<Widget> childrenArray = [];
-    for (final value in list['data']['body']['render']) {
-      if (value['type'] == 'text') {
-        childrenArray
-            .add(TextWidget(params: new MapStringDynamicInferface(value)));
-      } else if (value['type'] == 'input') {                
-        childrenArray.add(InputWidgetState(params: new MapStringDynamicInferface(value)));
-      } else if (value['type'] == 'select') {
-        childrenArray.add(DropdownButtonWidget(params: new MapStringDynamicInferface(value)));
-      }
+    List<Widget> childrenWidgets = [];
+    String titleScaffold = "";
+
+    if (list != null) {
+      childrenWidgets = this.handleWidgets(list['data']['body']['render']);
+      titleScaffold = list['data']['header']['title']['text'];
     }
+    
     return Scaffold(
         appBar: AppBar(
-          title: Text(list['data']['header']['title']['text']),
+          title: Text(titleScaffold),
         ),
         body: new RefreshIndicator(
             key: refreshKey,
@@ -78,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
               itemCount: 1,
               itemBuilder: (BuildContext context, int index) {
                 return new Column(
-                  children: childrenArray,
+                  children: childrenWidgets,
                 );
               },
             )));
@@ -144,9 +158,9 @@ class DropdownButtonWidget extends StatefulWidget {
   DropdownButtonWidget({Key key, @required this.params}) : super(key: key);
 
   @override
-  DropdownButtonWidgetState createState() => DropdownButtonWidgetState(params: null);
+  DropdownButtonWidgetState createState() =>
+      DropdownButtonWidgetState(params: null);
 }
-
 
 class DropdownButtonWidgetState extends State<DropdownButtonWidget> {
   String dropdownValue = 'One';

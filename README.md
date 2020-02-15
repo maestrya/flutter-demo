@@ -1,4 +1,4 @@
-# Autockage
+# Maestrya (Flutter Demo)
 
 A new Flutter project.
 

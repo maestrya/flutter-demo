@@ -1,4 +1,4 @@
-# Maestrya Demo
+# Maestrya (Flutter Demo)
 
 A new Flutter project.
 
